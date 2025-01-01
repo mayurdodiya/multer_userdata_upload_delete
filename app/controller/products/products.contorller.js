@@ -3,7 +3,7 @@ const commonServices = require('./../../services/common')
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-
+const Message = require('./../../services/message')
 
 const Products = db.products
 const Categories = db.categories
@@ -13,7 +13,7 @@ const Categories = db.categories
 // add image with user data in uploads folder
 exports.add = async (req, res) => {
     if (!req.file) {
-        return res.status(200).json({ success: false, message: 'No file uploaded!' })
+        return res.status(200).json({ success: false, message: Message.NO_FILE() })
     }
     console.log(req.files);
     try {
@@ -60,7 +60,7 @@ exports.getAll = async (req, res) => {
             ]
         }
         const data = await Products.findAll(query)
-        return res.status(200).json({ success: true, message: 'successfully loaded!', data: data })
+        return res.status(200).json({ success: true, message:Message.GET_DATA("Data"), data: data })
 
     } catch (error) {
         console.log(error);
@@ -90,7 +90,7 @@ exports.removeData = async (req, res) => {
             const data = await Products.destroy(query, { transaction: t })
             const data2 = await Categories.destroy({ where: { product_id: id } }, { transaction: t })
             await t.commit()
-            return res.status(200).json({ success: true, message: 'Deleted successfully!' })
+            return res.status(200).json({ success: true, message: Message.DELETED_SUCCESS("Data") })
 
         } catch (error) {
             console.log(error);
@@ -103,7 +103,7 @@ exports.removeData = async (req, res) => {
     }
 }
 
-// update usser data with image
+// update user data with image
 exports.edit = async (req, res) => {
     try {
         const id = req.params.id;
